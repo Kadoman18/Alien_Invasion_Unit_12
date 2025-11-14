@@ -7,6 +7,7 @@ game window initialization.
 import pygame
 import settings
 import paths
+import ship
 
 
 font_cache = {}
@@ -76,15 +77,16 @@ class AlienInvasion:
                 pygame.init()
                 self.settings = settings.Settings()
 
-                # Initialize screen using configured dimensions
                 self.screen = pygame.display.set_mode((self.settings.screen_size))
-                pygame.display.set_caption(self.settings.name)
-                icon = pygame.image.load(self.settings.icon)
-                pygame.display.set_icon(icon)
+                self.screen_rect = self.screen.get_rect(midbottom = (self.settings.ScreenSize.x // 2, self.settings.ScreenSize.y))
 
-                # Load background surface
+                pygame.display.set_caption(self.settings.name)
+                pygame.display.set_icon(pygame.image.load(self.settings.icon))
+
                 self.sky_surf = pygame.transform.scale(pygame.image.load(self.settings.background).convert(), (self.settings.screen_size))
                 self.sky_rect = self.sky_surf.get_rect()
+
+                self.ship = ship.Ship(self)
 
                 self.running = True
                 self.clock = pygame.time.Clock()
@@ -94,7 +96,6 @@ class AlienInvasion:
                 Execute the main game loop until the window is closed.
                 """
                 while self.running:
-                        # Event processing
                         for event in pygame.event.get():
                                 if event.type == pygame.QUIT:
                                         self.running = False
@@ -102,9 +103,10 @@ class AlienInvasion:
                                         exit()
 
                         self.screen.blit(self.sky_surf, (0, 0))
+                        self.screen.blit(self.ship.surf, (self.ship.rect))
                         pygame.display.flip()
 
-                        self.clock.tick(60)
+                        self.clock.tick(self.settings.fps)
 
 
 if __name__ == '__main__':

@@ -49,9 +49,11 @@ class Settings:
                 self.name: str = '👾 Alien Invasion 👾'
 
                 self.screen_size: tuple[int, int] = (
-                        self.ScreenSize().x,
-                        self.ScreenSize().y
+                        self.ScreenSize.x,
+                        self.ScreenSize.y
                 )
 
-                self.background: Path = paths.Graphics().background
-                self.icon: Path = paths.Graphics().icon
+                self.background: Path = paths.Graphics.background
+                self.ship_size: tuple[int, int] = (self.ScreenSize.x // 15, self.ScreenSize.y // 15)
+                self.icon: Path = paths.Graphics.icon
+                self.fps : int = 60
