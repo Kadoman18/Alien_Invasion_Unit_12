@@ -63,6 +63,26 @@ class AlienInvasion:
                 # Clock object used to regulate FPS
                 self.clock = pygame.time.Clock()
 
+
+        def _event_listener(self):
+            for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                            self.running = False
+                            pygame.quit()
+                            exit()
+
+
+        def _update_screen(self):
+                # Draw background to window
+                self.screen.blit(self.sky_surf, (0, 0))
+
+                # Draw player ship
+                self.ship.draw()
+
+                # Update the display (swap buffers)
+                pygame.display.flip()
+
+
         def run_game(self) -> None:
                 """
                 Execute the main game loop until the window is closed.
@@ -71,23 +91,15 @@ class AlienInvasion:
                 while self.running:
 
                         # Handle system and player events (closing window, etc.)
-                        for event in pygame.event.get():
-                                if event.type == pygame.QUIT:
-                                        self.running = False
-                                        pygame.quit()
-                                        exit()
+                        self._event_listener()
 
-                        # Draw background to window
-                        self.screen.blit(self.sky_surf, (0, 0))
+                        # Draws all relevant surfaces, rects, sprites, to the screen.
+                        self._update_screen()
 
-                        # Draw player ship
-                        self.ship.draw()
-
-                        # Update the display (swap buffers)
-                        pygame.display.flip()
 
                         # Limit framerate to avoid running too fast
                         self.clock.tick(self.settings.fps)
+
 
 
 if __name__ == '__main__':
