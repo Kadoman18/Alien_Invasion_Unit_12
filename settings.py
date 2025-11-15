@@ -86,6 +86,8 @@ class Settings:
                         self.ScreenSize.y // 10
                 )
 
+                self.ship_speed: int  = self.ScreenSize.x // 150
+
                 # Icon path for pygame window (if used)
                 self.icon: Path = paths.Graphics.icon
 

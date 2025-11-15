@@ -65,11 +65,33 @@ class AlienInvasion:
 
 
         def _event_listener(self):
-            for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                            self.running = False
-                            pygame.quit()
-                            exit()
+                for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                                self.running = False
+                                pygame.quit()
+                                exit()
+                        elif event.type == pygame.KEYDOWN:
+                                self._key_down_event(event)
+                        elif event.type == pygame.KEYUP:
+                                self._key_up_event(event)
+
+
+        def _key_down_event(self, event):
+                if event.key == pygame.K_a:
+                        self.ship.moving_left = True
+                elif event.key == pygame.K_d:
+                        self.ship.moving_right = True
+                elif event.key == pygame.K_q:
+                        self.running = False
+                        pygame.quit()
+                        exit()
+
+
+        def _key_up_event(self, event):
+                if event.key == pygame.K_a:
+                        self.ship.moving_left = False
+                elif event.key == pygame.K_d:
+                        self.ship.moving_right = False
 
 
         def _update_screen(self):
@@ -93,9 +115,11 @@ class AlienInvasion:
                         # Handle system and player events (closing window, etc.)
                         self._event_listener()
 
+                        # Updates the ships current position with inputs
+                        self.ship.update()
+
                         # Draws all relevant surfaces, rects, sprites, to the screen.
                         self._update_screen()
-
 
                         # Limit framerate to avoid running too fast
                         self.clock.tick(self.settings.fps)

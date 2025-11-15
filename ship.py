@@ -8,6 +8,7 @@ instance to access window dimensions, settings, and display surfaces.
 
 import pygame
 import paths
+import settings
 import hud
 from typing import TYPE_CHECKING
 
@@ -46,15 +47,28 @@ class Ship:
                         self.screen_rect.midbottom[0], self.screen_rect.midbottom[1] - (self.screen_rect.midbottom[1] // 100)
                         ))
 
-                # Create ship sprite.. cuz idk why not.. prally helpful for later
-                self.sprite = pygame.sprite.GroupSingle()
-
                 # Position ship centered horizontally and slightly above the bottom
                 self.rect.midbottom = (
                         self.screen_rect.midbottom[0],
                         self.screen_rect.midbottom[1]
                         - (self.screen_rect.midbottom[1] // 75)
                 )
+
+                self.moving_right: bool = False
+                self.moving_left: bool = False
+                self.x = self.rect.x
+
+        def update(self) -> None:
+                """
+                Updates the ships position.
+                """
+                if self.moving_right:
+                        self.x += self.settings.ship_speed
+                if self.moving_left:
+                        self.x -= self.settings.ship_speed
+
+                self.rect.x = self.x
+
 
         def draw(self) -> None:
                 """
