@@ -12,26 +12,30 @@ if TYPE_CHECKING:
 
 
 class Ship(pygame.sprite.Sprite):
-
         """Represents the player's ship in the game world."""
 
         def __init__(self, game: 'AlienInvasion') -> None:
-                super().__init__()      # REQUIRED for Sprite class
 
+                # Initialize sprite class
+                super().__init__()
+
+                # Basic references to AlienInvasion class and Settings class
                 self.game = game
-                self.screen = game.screen
                 self.settings = game.settings
-                self.screen_rect = game.screen_rect
 
-                # Load image
-                self.image = pygame.image.load(paths.Graphics.ship1).convert_alpha()
+                # Main display surface and its bounding rectangle
+                self.screen_image: pygame.Surface = game.screen
+                self.screen_rect: pygame.Rect = game.screen_rect
+
+                # Load ship image and create surface
+                self.image: pygame.Surface = pygame.image.load(paths.Graphics.ship1).convert_alpha()
                 self.image: pygame.Surface = pygame.transform.scale(
                         pygame.image.load(paths.Graphics.ship1),
                         self.settings.ship_size
                 ).convert_alpha()
 
                 # Rect for sprite
-                self.rect = self.image.get_rect()
+                self.rect: pygame.Rect = self.image.get_rect()
 
                 # Position ship centered horizontally and slightly above the bottom
                 self.rect.midbottom = (
@@ -41,27 +45,26 @@ class Ship(pygame.sprite.Sprite):
                 )
 
                 # Movement flags
-                self.moving_right = False
-                self.moving_left = False
+                self.moving_right: bool = False
+                self.moving_left: bool = False
 
                 # Firing flags
-                self.firing = False
-                self.firing_rapid = False
+                self.firing: bool = False
+                self.firing_rapid: bool = False
 
 
         def update(self) -> None:
-
                 """Update ship position based on movement flags."""
 
                 # Padding to make the transition from side to side quicker
-                buffer = 15
+                buffer: int = 15
 
                 # Firing slows ship
-                self.speed = self.settings.ship_speed
+                self.speed: int  = self.settings.ship_speed
                 if self.firing and self.firing_rapid:
-                        self.speed = self.settings.ship_rapid_firing_speed
+                        self.speed: int  = self.settings.ship_rapid_firing_speed
                 elif self.firing:
-                        self.speed = self.settings.ship_base_firing_speed
+                        self.speed: int = self.settings.ship_base_firing_speed
 
                 # Rightward movement and wrapping
                 if self.moving_right:
@@ -78,4 +81,6 @@ class Ship(pygame.sprite.Sprite):
 
         def draw(self) -> None:
                 """Draw the ship."""
-                self.screen.blit(self.image, self.rect)
+
+                # Draw the ship
+                self.screen_image.blit(self.image, self.rect)
