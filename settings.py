@@ -40,7 +40,7 @@ class Settings:
                 pygame.display.init()
 
                 # Easy Toggle for testing screen sizes and their effects on gameplay
-                DEBUGGING: bool = True
+                DEBUGGING: bool = False
                 if DEBUGGING:
                         x: int = 900
                         y: int = 450
@@ -90,8 +90,13 @@ class Settings:
                 )
 
                 # Sets ships speed proportional to screen size, ensuring continuity across devices
-                self.ship_speed: int  = self.ScreenSize.x // 150
-                self.ship_firing_speed: int = self.ship_speed - (self.ship_speed // 3)
+                self.ship_speed: int = self.ScreenSize.x // 150
+                self.ship_base_firing_speed: int = self.ship_speed - (self.ship_speed // 3)
+                self.ship_rapid_firing_speed: int = self.ship_speed // 2
+
+                # Fire rate for continuous ship fire
+                self.ship_base_fire_rate: int = 750
+                self.ship_rapid_fire_rate: int = 250
 
                 # Laser sprite scaling is proportional to the screen size, ensuring continuity across devices
                 self.laser_size: tuple[int, int] = (

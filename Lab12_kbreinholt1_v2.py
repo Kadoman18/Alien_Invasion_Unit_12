@@ -8,33 +8,20 @@ from settings import Settings
 from ship import Ship
 from laser import Laser
 
+
 class AlienInvasion:
+
         """
         Main game controller for the Alien Invasion application.
-
-        Handles:
-        - pygame initialization
-        - window configuration
-        - background loading and scaling
-        - ship creation
-        - main game loop execution
         """
 
-        def __init__(self):
-                """
-                Initialize game settings, window, background, and runtime systems.
-                """
+        def __init__(self) -> None:
 
-                # Prepare all pygame subsystems
                 pygame.init()
-
-                # Load configuration settings (screen size, paths, FPS, etc.)
                 self.settings = Settings()
 
-                # Create main game window with configured resolution
                 self.screen = pygame.display.set_mode((self.settings.screen_size))
 
-                # Screen rectangle used for positioning objects consistently
                 self.screen_rect = self.screen.get_rect(
                         midbottom=(
                                 self.settings.ScreenSize.x // 2,
@@ -42,38 +29,57 @@ class AlienInvasion:
                         )
                 )
 
-                # Window title and icon loaded from settings
                 pygame.display.set_caption(self.settings.name)
                 pygame.display.set_icon(pygame.image.load(self.settings.icon))
 
-                # Load and scale background to fill entire window
-                self.sky_surf = pygame.transform.scale(
+                self.sky_image = pygame.transform.scale(
                         pygame.image.load(self.settings.background).convert(),
                         self.settings.screen_size
                 )
-                self.sky_rect = self.sky_surf.get_rect()
+                self.sky_rect = self.sky_image.get_rect()
 
-                # Create the player's ship, passing this game instance for access
+                # Create the player's ship (sprite)
                 self.ship = Ship(self)
 
-                # Create the laser
-                self.laser = Laser(self)
+                # Create the ship sprite
+                self.ship_group = pygame.sprite.GroupSingle()
+                self.ship_group.add(self.ship)
 
-                # Runtime flags
+                # Create the lasers
+                self.lasers = pygame.sprite.Group()
+
                 self.running = True
-
-                # Clock object used to regulate FPS
                 self.clock = pygame.time.Clock()
 
 
-        def _event_listener(self):
+        def _fire_laser(self) -> None:
+                now = pygame.time.get_ticks()
+
+                if not hasattr(self, "last_shot_time"):
+                        self.last_shot_time = 0
+
+                if self.ship.firing and (now - self.last_shot_time >= self.settings.ship_base_fire_rate):
+                        laser = Laser(self)
+                        self.lasers.add(laser)
+                        self.last_shot_time = now
+
+                elif self.ship.firing and self.ship.firing_rapid and (now - self.last_shot_time >= self.settings.ship_rapid_fire_rate):
+                        laser = Laser(self)
+                        self.lasers.add(laser)
+                        self.last_shot_time = now
+
+
+        def _event_listener(self) -> None:
+
                 for event in pygame.event.get():
                         if event.type == pygame.QUIT:
                                 self.running = False
                                 pygame.quit()
                                 exit()
+
                         elif event.type == pygame.KEYDOWN:
                                 self._key_down_event(event)
+
                         elif event.type == pygame.KEYUP:
                                 self._key_up_event(event)
 
@@ -83,62 +89,65 @@ class AlienInvasion:
                         self.ship.moving_left = True
                 elif event.key == pygame.K_d:
                         self.ship.moving_right = True
+                elif event.key == pygame.K_LEFT:
+                        self.ship.moving_left = True
+                elif event.key == pygame.K_RIGHT:
+                        self.ship.moving_right = True
                 elif event.key == pygame.K_SPACE:
-                        self.laser.draw()
                         self.ship.firing = True
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_LSHIFT:
+                        self.ship.firing_rapid = True
+                elif event.key == pygame.K_ESCAPE:
                         self.running = False
                         pygame.quit()
                         exit()
 
 
-        def _key_up_event(self, event):
+        def _key_up_event(self, event) -> None:
+
                 if event.key == pygame.K_a:
                         self.ship.moving_left = False
                 elif event.key == pygame.K_d:
                         self.ship.moving_right = False
+                elif event.key == pygame.K_LEFT:
+                        self.ship.moving_left = False
+                elif event.key == pygame.K_RIGHT:
+                        self.ship.moving_right = False
                 elif event.key == pygame.K_SPACE:
                         self.ship.firing = False
+                elif event.key == pygame.K_LSHIFT:
+                        self.ship.firing_rapid = False
 
 
-        def _update_screen(self):
-                # Draw background to window
-                self.screen.blit(self.sky_surf, (0, 0))
+        def _update_screen(self) -> None:
 
-                # Draw player ship
-                self.ship.draw()
+                self.screen.blit(self.sky_image, (0, 0))
 
-                self.laser.draw()
+                # >>> DRAW SHIP USING SPRITE GROUP <<<
+                self.ship_group.draw(self.screen)
 
-                # Update the display (swap buffers)
+                # Lasers
+                self.lasers.draw(self.screen)
+
                 pygame.display.flip()
 
 
         def run_game(self) -> None:
-                """
-                Execute the main game loop until the window is closed.
-                """
 
-                self.ship_sprite = pygame.sprite.GroupSingle().add(Ship(self))
+                while True:
 
-                self.laser_sprite = pygame.sprite.Group().add(Laser(self))
-
-                while self.running:
-
-                        # Handle system and player events (closing window, etc.)
                         self._event_listener()
 
-                        # Updates the ships current position with inputs
-                        self.ship.update()
+                        # >>> UPDATE SHIP USING SPRITE GROUP <<<
+                        self.ship_group.update()
 
-                        self.laser.update()
+                        self._fire_laser()
 
-                        # Draws all relevant surfaces, rects, sprites, to the screen.
+                        self.lasers.update()
+
                         self._update_screen()
 
-                        # Limit framerate to avoid running too fast
                         self.clock.tick(self.settings.fps)
-
 
 
 if __name__ == '__main__':

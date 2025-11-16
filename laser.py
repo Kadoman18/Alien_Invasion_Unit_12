@@ -34,7 +34,7 @@ class Laser(pygame.sprite.Sprite):
 
                 # Surf and Rect for laser sprite
                 self.image: pygame.Surface = pygame.transform.scale(pygame.image.load(paths.Graphics.laser), self.settings.laser_size).convert_alpha()
-                self.rect: pygame.Rect = self.image.get_rect(center = (self.ship.rect.midtop))
+                self.rect: pygame.Rect = self.image.get_rect(midtop = (self.ship.rect.midtop))
 
                 # Sets the lasers travel speed
                 self.speed: int = self.settings.laser_speed
@@ -50,14 +50,5 @@ class Laser(pygame.sprite.Sprite):
 
                 # TODO: Kill the laser when it leaves the screen
                 if self.rect.y < -5:
-                        pass
-
-
-        def draw(self) -> None:
-                """
-                Draw the ship to the screen at its current position.
-                """
-
-                # Draw the ship to the screen
-                self.screen.blit(self.image, self.rect)
+                        self.kill()
 
