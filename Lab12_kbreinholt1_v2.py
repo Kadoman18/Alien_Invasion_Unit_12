@@ -4,8 +4,9 @@ Includes the core game window initialization.
 """
 
 import pygame
-import settings
-from ship import Ship, Laser
+from settings import Settings
+from ship import Ship
+from laser import Laser
 
 class AlienInvasion:
         """
@@ -28,7 +29,7 @@ class AlienInvasion:
                 pygame.init()
 
                 # Load configuration settings (screen size, paths, FPS, etc.)
-                self.settings = settings.Settings()
+                self.settings = Settings()
 
                 # Create main game window with configured resolution
                 self.screen = pygame.display.set_mode((self.settings.screen_size))
