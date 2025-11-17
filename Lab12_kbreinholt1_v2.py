@@ -48,6 +48,8 @@ class AlienInvasion:
                 # Create the lasers sprite group
                 self.lasers = pygame.sprite.Group()
 
+                self.laser_blast = pygame.mixer.music.load(self.settings.laser_noise)
+
                 # Game running boolean
                 self.running: bool = True
 
@@ -69,12 +71,14 @@ class AlienInvasion:
                 if self.ship.firing and (now - self.last_shot_time >= self.settings.ship_base_fire_rate):
                         laser = Laser(self)
                         self.lasers.add(laser)
+                        pygame.mixer.music.play()
                         self.last_shot_time = now
 
                 # Rapid fire speed (spacebar + shift)
                 elif self.ship.firing and self.ship.firing_rapid and (now - self.last_shot_time >= self.settings.ship_rapid_fire_rate):
                         laser = Laser(self)
                         self.lasers.add(laser)
+                        pygame.mixer.music.play()
                         self.last_shot_time = now
 
 

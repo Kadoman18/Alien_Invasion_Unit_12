@@ -107,5 +107,8 @@ class Settings:
                 # Sets laser speed proportional to screen size, ensuring continuity across devices
                 self.laser_speed: int  = self.ScreenSize.x // 125
 
+                # Path to laser fire noise
+                self.laser_noise: Path = paths.Audio.laser
+
                 # Frames per second cap for the main loop
                 self.fps: int = 60
