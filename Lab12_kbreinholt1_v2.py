@@ -7,6 +7,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from arsenal import Laser
+from alien_ships import Aliens
 
 
 class AlienInvasion:
@@ -49,6 +50,10 @@ class AlienInvasion:
                 self.lasers = pygame.sprite.Group()
 
                 self.laser_blast = pygame.mixer.music.load(self.settings.laser_noise)
+
+                # Alien Sprite
+                self.alien = Aliens(self)
+                self.aliens = pygame.sprite.Group()
 
                 # Game running boolean
                 self.running: bool = True
@@ -160,8 +165,11 @@ class AlienInvasion:
                 # Draw ship sprite
                 self.ship_group.draw(self.screen)
 
-                # Draw laser sprite group
+                # Draw lasers sprite group
                 self.lasers.draw(self.screen)
+
+                # Draw aliens sprite group
+                self.aliens.draw(self.screen)
 
                 # Update the display (swap buffers)
                 pygame.display.flip()
@@ -169,6 +177,8 @@ class AlienInvasion:
 
         def run_game(self) -> None:
                 """Main game loop"""
+
+                self.aliens.add(self.alien)
 
                 while True:
 
